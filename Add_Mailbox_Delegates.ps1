@@ -59,6 +59,11 @@ function PromptFor-Mailbox
 {
     $mailboxEmail = Read-Host "Enter the email address of the mailbox"
     $mailboxEmail = $mailboxEmail.Trim()
+    if ($mailboxEmail -eq "" )
+    {
+        Read-Host "Mailbox email was blank. Press Enter to exit"
+        exit
+    }
     $mailbox = Get-ExoMailbox -Identity $mailboxEmail -ErrorAction "Stop"
     return $mailbox
 }
@@ -69,7 +74,12 @@ function PromptFor-DelegateList
     Write-Host "AccessRights can accept the values `"FullAccess`" and `"SendAs`"." -ForegroundColor "DarkCyan"
     $csvPath = Read-Host "Enter path to CSV (must be .csv)"
     $csvPath = $csvPath.Trim('"')
-    return Import-Csv -Path $csvPath
+    if ($csvPath -eq "")
+    {
+        Read-Host "CSV path is blank. Press Enter to exit"
+        exit
+    }
+    return @(Import-Csv -Path $csvPath)
 }
 
 function Confirm-CSVHasCorrectHeaders($importedCSV)
@@ -121,6 +131,7 @@ function Prompt-YesOrNo($question)
 
 function Add-Delegates($mailbox, $delegateList, $excludeDisabledUsers)
 {
+    if ( $null -eq $delegateList ) { return }
     $i = 0
     foreach ($delegate in $delegateList)
     {
@@ -151,7 +162,14 @@ function Add-Delegates($mailbox, $delegateList, $excludeDisabledUsers)
 function Confirm-UserEnabled($upn)
 {
     $upn = $upn.Trim()
-    $user = Get-AzureADUser -ObjectId $upn -ErrorAction "SilentlyContinue"
+    try 
+    {
+        $user = Get-AzureADUser -ObjectId $upn -ErrorAction "SilentlyContinue"
+    }
+    catch 
+    {
+        # The try catch is just here because otherwise the errors are not suppressed with this cmdlet when a user is not found.
+    }    
     if ($null -eq $user) { return }
     return $user.AccountEnabled
 }
@@ -208,17 +226,19 @@ Read-Host -Prompt "Press Enter to exit"
 
 <#
 Testing:
-- List of 0 delegates
-- List of 1 delegate
-- List of 2 delegates
-- FullAccess
-- SendAs
-- Invalid AccessRights specified
-- Invalid mailbox specified
-- Input file has leading/trailing spaces in values
-- Specified user's primarySMTP but NOT their UPN
-- Specified mailbox's primarySMTP but not its UPN
-- Write-Progress executes as expected
-- Delegate was not found
-- Delegate was disabled
+DONE - List of 0 delegates
+DONE - List of 1 delegate
+DONE - List of 2 delegates
+DONE - FullAccess
+DONE - SendAs
+DONE - Already had the access
+DONE - Invalid AccessRights specified
+DONE - Invalid mailbox specified
+NOT NEEDED - Input file has leading/trailing spaces in values
+DONE - Specified user's primarySMTP but NOT their UPN
+DONE - Specified mailbox's primarySMTP but not its UPN
+DONE - Write-Progress executes as expected
+DONE - Delegate was not found
+DONE - Delegate was disabled
+DONE - Blank rows in input CSV
 #>
