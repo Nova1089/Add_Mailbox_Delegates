@@ -223,22 +223,3 @@ if ($excludeDisabledUsers) { TryConnect-AzureAD }
 Add-Delegates -Mailbox $mailbox -DelegateList $delegateList -ExcludeDisabledusers $excludeDisabledUsers
 Write-Host "All done!" -ForegroundColor "Green"
 Read-Host -Prompt "Press Enter to exit"
-
-<#
-Testing:
-DONE - List of 0 delegates
-DONE - List of 1 delegate
-DONE - List of 2 delegates
-DONE - FullAccess
-DONE - SendAs
-DONE - Already had the access
-DONE - Invalid AccessRights specified
-DONE - Invalid mailbox specified
-NOT NEEDED - Input file has leading/trailing spaces in values
-DONE - Specified user's primarySMTP but NOT their UPN
-DONE - Specified mailbox's primarySMTP but not its UPN
-DONE - Write-Progress executes as expected
-DONE - Delegate was not found
-DONE - Delegate was disabled
-DONE - Blank rows in input CSV
-#>
