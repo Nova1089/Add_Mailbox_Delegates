@@ -178,6 +178,7 @@ function Grant-MailboxAccess($mailboxUpn, $delegate)
 {
     if ($null -eq $mailboxUpn) { return }
     if ($null -eq $delegate) { return }
+    if ($null -eq $delegate.DelegateEmail) { return}
     $mailboxUpn = $mailboxUpn.Trim()
     $delegateEmail = $delegate.DelegateEmail.Trim()
     $accessRights = $delegate.AccessRights.Trim()
